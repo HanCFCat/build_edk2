@@ -1,0 +1,36 @@
+name: Build edk2
+
+on:
+  watch:
+    types: [started]
+    
+jobs:
+  build:
+    if: github.event.repository.owner.id == github.event.sender.id
+    runs-on: ubuntu-20.04
+
+steps:
+    - name: Check Out
+      uses: actions/checkout@main
+      
+    - name: Update & Install
+      run: |
+        sudo apt update
+        sudo apt upgrade
+        sudo apt install build-essential uuid-dev iasl git nasm gcc-aarch64-linux-gnu abootimg python3-distutils python3-pil python3-git gettext
+
+    - name: Clone & build
+      run: |
+        git clone https://github.com/edk2-porting/edk2-sdm845.git --depth=1
+        cd edk2-sdm845
+        bash build.sh --device judyln
+
+    - name: Upload File to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: edk2-sdm845/*.img
+        name: ${{ steps.var.outputs.date }} ${{ steps.var.outputs.device_code }} by ${{ steps.var.outputs.git_username }}
+        tag_name: ${{ github.run_id }}
+        body: TWRP Recovery built by ${{ steps.var.outputs.git_username }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
