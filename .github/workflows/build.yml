@@ -9,7 +9,7 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     runs-on: ubuntu-20.04
 
-steps:
+    steps:
     - name: Check Out
       uses: actions/checkout@main
       
@@ -29,8 +29,8 @@ steps:
       uses: softprops/action-gh-release@v1
       with:
         files: edk2-sdm845/*.img
-        name: ${{ steps.var.outputs.date }} ${{ steps.var.outputs.device_code }} by ${{ steps.var.outputs.git_username }}
+        name: edk2
         tag_name: ${{ github.run_id }}
-        body: TWRP Recovery built by ${{ steps.var.outputs.git_username }}
+        body: edk2 for judyln
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
